@@ -1,4 +1,5 @@
 import React from 'react';
+<<<<<<< Updated upstream
 import {
   MDBBtn,
   MDBContainer,
@@ -9,6 +10,10 @@ import {
   MDBInput
 }
 from 'mdb-react-ui-kit';
+=======
+
+import TelaLogin from './components/TelaLogin';
+>>>>>>> Stashed changes
 
 function App() {
   return (
