@@ -50,7 +50,7 @@ function App() {
     const matricula = decodedToken.sub;
     const response = await fetch(`${apiUrl}/usuario/${matricula}`,{
       headers:{
-        "Authorization": `Bearer: ${token}`,
+        "Authorization": `Bearer ${token}`,
       },
     });
     console.log("User fetched succesfully")
