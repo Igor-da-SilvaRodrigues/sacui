@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
     MDBBtn,
     MDBContainer,
@@ -9,7 +9,40 @@ import {
     MDBInput,
   } from 'mdb-react-ui-kit';
 
-const TelaLogin = () => {
+/**
+ * Uma tela de login
+ * @param {*} endpointUrl A url da API que tratará o login
+ * @param {*} onLogin Listener que será chamado se o login for efetuado. Recebe como argumento a chave de sessão retornada pela API. 
+ * @param {*} onError Listener que será chamado se algum erro ocorrer. Receberá como argumento uma string descrevendo o erro.
+ * @returns 
+ */
+const TelaLogin = ({endpointUrl, onLogin, onError}) => {
+  const [matricula, setMatricula] = useState("")
+  const [senha, setSenha] = useState("")
+
+  async function handleSubmit(){
+    //logging in
+    console.log("Attempting login")
+    const response = await fetch(`${endpointUrl}/login`, {
+      method: "POST",
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({matricula, senha})
+    });
+    console.log("response received")
+    if(response.ok){
+      //success
+      console.log("Login succesfull, returning token")
+      const token = await response.text()
+      onLogin(token)
+    }else{
+      //failure
+      console.log("Login failed, credentials might be incorrect")
+      onError(`Erro: ${response.status} ${response.statusText}; detalhes: ${response.body}`)
+    }
+  }
+
   return (
     <MDBContainer fluid className='p-4 background-radial-gradient overflow-hidden'>
 
@@ -29,11 +62,11 @@ const TelaLogin = () => {
           <MDBCard className='my-5 bg-glass'>
             <MDBCardBody className='p-5'>
 
-              <MDBInput wrapperClass='mb-4' label='Matrícula' id='form3' type='email'/>
-              <MDBInput wrapperClass='mb-4' label='Senha' id='form4' type='password'/>
+              <MDBInput wrapperClass='mb-4' label='Matrícula' id='form3' type='email' onChange={(e)=>setMatricula(e.target.value)}/>
+              <MDBInput wrapperClass='mb-4' label='Senha' id='form4' type='password'  onChange={(e)=>setSenha(e.target.value)}/>
 
               <div className='w-100 d-flex justify-content-center'>
-                <MDBBtn className='w-50 mb-4' size='lg' style={{  }}>ENTRAR</MDBBtn>
+                <MDBBtn className='w-50 mb-4' size='lg' style={{  }} onClick={handleSubmit}>ENTRAR</MDBBtn>
               </div>
 
               <p>Esqueci minha senha</p>
