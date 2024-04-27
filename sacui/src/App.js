@@ -4,24 +4,32 @@ import TelaLogin from './components/TelaLogin';
 
 import { jwtDecode } from "jwt-decode";
 import { useFetchUserById } from './hooks/useFetchUserById';
+import HomeAdmin from './components/HomeAdmin';
+import './App.css';
+import {
+  MDBContainer,
+  MDBNavbar,
+  MDBNavbarBrand,
+  MDBBtn
+} from 'mdb-react-ui-kit';
 
 function App() {
-  const apiUrl = "http://localhost:8080"
+  const apiUrl = "http://localhost:8080/sac/api"
   const [token, setToken] = useState("");
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  async function handleLoginSuccess(token){
+  async function handleLoginSuccess(token) {
     console.log("Handling succesfull login")
     console.log(`Setting token ${token}`)
     setToken(token);
     setLoading(true);
-    try{
+    try {
       const response = await fetchUser(token);
 
-      if(!response.ok){
+      if (!response.ok) {
         console.log(response)
         throw new Error(`Falha ao carregar dados do usuário. Erro ${response.status}`)
       }
@@ -29,27 +37,27 @@ function App() {
       setUser(userData);
       setIsLoggedIn(true);
       console.log('logado')
-    }catch(error){
+    } catch (error) {
       setError(error.message);
       setIsLoggedIn(false);
-    }finally{
+    } finally {
       setLoading(false);
     }
   }
 
-  async function handleLoginError(string){
+  async function handleLoginError(string) {
     setError(string);
     setIsLoggedIn(false);
   }
 
-  async function fetchUser(token){
+  async function fetchUser(token) {
     console.log("Fetching user data")
     console.log(`Decoding token ${token}`)
-    
+
     const decodedToken = jwtDecode(token);
     const matricula = decodedToken.sub;
-    const response = await fetch(`${apiUrl}/usuario/${matricula}`,{
-      headers:{
+    const response = await fetch(`${apiUrl}/usuario/${matricula}`, {
+      headers: {
         "Authorization": `Bearer ${token}`,
       },
     });
@@ -59,12 +67,23 @@ function App() {
 
   return (
     <>
-      {isLoggedIn ? 
-        <p>Você está logado</p> 
-        :
+      {isLoggedIn && (<MDBNavbar dark className='main-header p-0 '>
+        <MDBContainer fluid className='d-flex flex-row'>
+          <MDBNavbarBrand href='#'>
+            <img src='cefet_branco.png' className='logo' />
+            SAC
+          </MDBNavbarBrand>
+          <MDBBtn color="danger" size="sm" type='button'>
+            Sair da sessão
+          </MDBBtn>
+        </MDBContainer>
+      </MDBNavbar>)}
+       {isLoggedIn ? 
+        user.usuarioAdm == true ? <HomeAdmin user={user} token={token} url={apiUrl}/> : <p>Você é aluno</p>
+      :
         error != null ?
           <p>Erro {error}</p>
-          :
+        :
           <TelaLogin endpointUrl={apiUrl} onLogin={handleLoginSuccess} onError={handleLoginError}/>}
 
     </>
