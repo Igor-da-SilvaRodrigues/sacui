@@ -52,28 +52,7 @@ const HomeAdmin = ({ user, url, token }) => {
         }
     }, [pageNumber, pageSize, sortOrder, sortType]);
 
-    //emulando dados
-    let data = [
-        {
-            "Protocolo": "Protocolo aqui",
-            "Prioridade": "Urgente",
-            "Status": "Aberto",
-            "Data de Abertura": "18 de fevereiro de 2022"
-        },
-        {
-            "Protocolo": "Outro protocolo aqui",
-            "Prioridade": "Normal",
-            "Status": "Retornado",
-            "Data de Abertura": "12 de fevereiro de 2022"
-        },
-        {
-            "Protocolo": "Protocolo aqui",
-            "Prioridade": "Baixa",
-            "Status": "Fechado",
-            "Data de Abertura": "13 de fevereiro de 2022"
-        }
 
-    ]
     //headers da tabela, cada um com um nome e nome de display, e funcionalidade de sort para apenas alguns.
     const headers = [
         { nome: "protocolo", nomeDisplay: "Protocolo" },
@@ -82,11 +61,6 @@ const HomeAdmin = ({ user, url, token }) => {
                 console.log(ordem, sujeito);
                 setSortOrder(ordem);
                 setSortType("tipoChamado.prioridade");
-                // setParams({
-                //     page: pageNumber,
-                //     size: pageSize,
-                //     sort: `tipoChamado.prioridade,${ordem}`
-                // });
             }
         },
         {
@@ -94,11 +68,6 @@ const HomeAdmin = ({ user, url, token }) => {
                 console.log(ordem, sujeito);
                 setSortOrder(ordem);
                 setSortType("status");
-                // setParams({
-                //     page: pageNumber,
-                //     size: pageSize,
-                //     sort: `status,${ordem}`
-                // });
             }
         },
         {
@@ -106,20 +75,9 @@ const HomeAdmin = ({ user, url, token }) => {
                 console.log(ordem, sujeito);
                 setSortOrder(ordem);
                 setSortType("dataAbertura");
-                // setParams({
-                //     page: pageNumber,
-                //     size: pageSize,
-                //     sort: `dataAbertura,${ordem}`
-                // });
             }
         }
     ]
-
-
-    //adicionando checkbox na coluna sem nome
-    data.map((value, index) => {
-        value[""] = <MDBCheckbox onChange={() => { console.log(value) }} />
-    })
 
     const caption = "Lista de chamados"
 
