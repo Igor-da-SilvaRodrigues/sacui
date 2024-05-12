@@ -12,7 +12,7 @@ import { useCreateChamado } from '../hooks/useCreateChamado';
  * @param {string} url A url da api.
  * @param {string} token o token da sessão. 
  * @param {*} onAbrirChamado um callback que será chamado quando um chamado for aberto com sucesso, pode ser usado caso exista alguma operação do componente pai que dependa do sucesso da abertura do chamado, como por exemplo, o desmontamento/fechamento deste componente
- * @param {*} onError um callback que será chamado quando algo der errado na abertura, e caso o componente pai deseje tratar esse erro de alguma forma. O callback recebe um objeto contendo os erros como argumento no seguinte formato:{errorCreateChamado, errorTipoChamado}.
+ * @param {*} onError um callback que será chamado quando algo der errado na abertura, e caso o componente pai deseje tratar esse erro de alguma forma. O callback recebe uma string descrevendo o erro.
  * @returns 
  */
 const TelaAbrirChamado = ({ user, url, token, onAbrirChamado, onError}) => {
@@ -49,8 +49,12 @@ const TelaAbrirChamado = ({ user, url, token, onAbrirChamado, onError}) => {
     useEffect(()=>{
         //caso algum erro tenha ocorrido, não faça nada e chame o callback de erro
         if(isErrorCreateChamado || isErrorTipoChamado){
-            onError != undefined && onError({errorCreateChamado, errorTipoChamado}); // execute onError apenas se ele for fornecido
-        }else if(chamado != null && statusCodeCreateChamado === 200){//chamado ainda pode ser nulo mesmo que não haja erro, evitando chamar callback neste caso.  
+            onError != undefined && onError("Um erro ocorreu ao tentar acessar o servidor."); // execute onError apenas se ele for fornecido
+        }else if (statusCodeCreateChamado != null && statusCodeCreateChamado != 200){
+            //requisição bem sucedida mas retornado um erro HTTP pelo backend
+            onError != undefined && onError(`O servidor respondeu com erro HTTP ${statusCodeCreateChamado}.`)
+        }
+        else if(chamado != null && statusCodeCreateChamado === 200){//chamado ainda pode ser nulo mesmo que não haja erro, evitando chamar callback neste caso.  
             onAbrirChamado != undefined && onAbrirChamado();//execute onAbrirChamado apenas se ele for fornecido
         }
     }, [chamado, statusCodeCreateChamado, isErrorCreateChamado, isErrorTipoChamado])
