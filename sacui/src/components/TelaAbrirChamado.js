@@ -36,6 +36,10 @@ const TelaAbrirChamado = ({ user, url, token, onAbrirChamado, onError}) => {
     //abrir chamado
     const handleSubmit = (e) => {
         e.preventDefault()
+        if (selectedMotivo == null || selectedTipo == null || selectedMotivo === "default" || !justificativa){
+            alert("Por favor preencha o formulário!")
+            return
+        }
         commit({
             "idTipoChamado": selectedTipo["tipo"],
             "idMotivo": selectedMotivo,
