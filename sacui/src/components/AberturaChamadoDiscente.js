@@ -1,47 +1,72 @@
 import Footer from "./Footer";
 import Header from "./Header";
+import React, { useEffect, useState } from 'react'
+
+import { useGetAllTipoChamado } from '../hooks/useGetAllTipoChamado';
+import { useCreateChamado } from '../hooks/useCreateChamado';
 import "./AberturaChamadoDiscente.css";
+import ProtocoloChamado from './ProtocoloChamado'
 
-const AberturaChamadoDiscente = () => {
-  const tiposChamados = [
-    { id: 0, name: "" },
-    { id: 1, name: "Alteração de Cadastro" },
-    { id: 2, name: "Colação de Grau" },
-    { id: 3, name: "Declarações" },
-    { id: 4, name: "Destrancamento" },
-    { id: 5, name: "Dispensa de disciplinas" },
-    { id: 6, name: "Ementas" },
-    { id: 7, name: "Históricos" },
-    { id: 8, name: "Outros assuntos" },
-    { id: 9, name: "Quebra de choque de horário" },
-    { id: 10, name: "Quebra de requisito" },
-    { id: 11, name: "Readmissão de matrícula" },
-    { id: 12, name: "Revisão de inscrição" },
-    { id: 13, name: "Trancamento" },
-  ];
+const AberturaChamadoDiscente = ({ user, url, token }) => {
+  const { isLoading: isLoadingTipoChamado, isError: isErrorTipoChamado, error: errorTipoChamado, statusCode: statusCodeTipoChamado, tipos } = useGetAllTipoChamado(`${url}/tipochamado?`, token)
+  const [selectedTipo, setSelectedTipo] = useState(null)
+  const [selectedMotivo, setSelectedMotivo] = useState(null)
+  const [justificativa, setJustificativa] = useState("")
+  const { commit, isLoading: isLoadingCreateChamado, isError: isErrorCreateChamado, error: errorCreateChamado, statusCode: statusCodeCreateChamado, chamado } = useCreateChamado(`${url}/chamado?`, token)
+  const [target, setTarget] = useState("");
+  
 
-  const motivos = [
-    { id: 0, name: "" },
-    { id: 1, name: "Primeira solicitação" },
-    { id: 2, name: "Extravio" },
-    { id: 3, name: "Outro motivo" },
-  ];
+  const handleSelectChamadoChange = (e) => {
+    setSelectedTipo(tipos.find(tipo => tipo["tipo"] === e.target.value));
+  }
 
-  return (
+  const handleSelectMotivoChange = (e) => {
+    setSelectedMotivo(e.target.value)
+  }
+  const handleJustificativaChange = (e) => {
+    setJustificativa(e.target.value)
+  }
+
+  //abrir chamado
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (selectedMotivo == null || selectedTipo == null || selectedMotivo === "default" || !justificativa) {
+      alert("Por favor preencha o formulário!")
+      return
+    }
+    commit({
+      "idTipoChamado": selectedTipo["tipo"],
+      "idMotivo": selectedMotivo,
+      "justificativa": justificativa,
+      "dataAbertura": "2012-12-24",//a data vai ser sobrescrita pela data atual no backend
+      "idDiscente": user["matricula"]
+    })
+  }
+
+  //redirecionar para pagina tal quando concluir a requisição
+  useEffect(()=>{
+    if (isLoadingCreateChamado === false && isErrorCreateChamado === false && statusCodeCreateChamado === 200 && chamado != null){
+      setTarget("protocolo")
+    }
+  }, [isLoadingCreateChamado, isErrorCreateChamado, statusCodeCreateChamado, chamado])
+
+  const page = (
     <div>
       <Header />
       <h1>Abertura de chamado:</h1>
       <label className="aberturaChamado">
         <span>Chamado</span>
-        <select name="tipoChamado">
-          {tiposChamados.map((tipoChamado) => (
-            <option value={tipoChamado.id}>{tipoChamado.name}</option>
+        <select name="tipoChamado" defaultValue={"default"} onChange={handleSelectChamadoChange}>
+          <option value="default"> -- Por favor selecione uma opção -- </option>
+          {tipos != null && tipos.map((tipoChamado) => (
+            <option value={tipoChamado['tipo']}>{tipoChamado['tipo']}</option>
           ))}
         </select>
         <span>Motivo</span>
-        <select name="motivo">
-          {motivos.map((motivo) => (
-            <option value={motivo.id}>{motivo.name}</option>
+        <select name="motivo" onChange={handleSelectMotivoChange}>
+          <option value="default"> -- Por favor selecione uma opção -- </option>
+          {selectedTipo != null && selectedTipo["motivos"].map((motivo) => (
+            <option value={motivo}>{motivo}</option>
           ))}
         </select>
         <span>Justificativa:</span>
@@ -50,11 +75,20 @@ const AberturaChamadoDiscente = () => {
           placeholder="Detalhe o motivo de seu chamado."
           rows={15}
           style={{ resize: "none" }}
+          onChange={handleJustificativaChange}
         ></textarea>
-        <input type="submit" className="submit"/>
+        <input type="submit" className="submit" onClick={handleSubmit}/>
       </label>
       <Footer pos="fixed" bot={0} />
     </div>
+  )
+
+
+  return (
+    <>
+      {target === "" && page}
+      {target === "protocolo" && <ProtocoloChamado user={user} url={url} token={token} chamado={chamado} returnToParent={()=>{setTarget("")}}></ProtocoloChamado>}
+    </>
   );
 };
 

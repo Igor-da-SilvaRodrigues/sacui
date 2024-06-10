@@ -45,3 +45,17 @@
 .logo{
   width: 8rem;
 }
+button {
+  font-weight: bold;
+  background-color: #CBDCF7;
+  border: #073F64 solid 2px;
+  padding: 8px;
+  margin: 8px;
+  border-radius: 20px;
+  font-size: medium;
+}
+
+button:hover {
+  background-color: #073F64;
+  color: #fff;
+}
