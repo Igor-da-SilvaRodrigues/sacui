@@ -13,10 +13,8 @@ import { useGet } from "./useGet"
  */
 export const useGetChamadosByUser = (url, params, userId, token) => {
     const [chamados, setChamados] = useState(null);
-
-    const effectiveUrl = `${url}/${userId}` // definindo url do request
-    
-    const {isLoading, isError, error, statusCode, response} = useGet(url, params, {
+        
+    const {isLoading, isError, error, statusCode, response} = useGet(`${url}/${userId}?`, params, {
         'Authorization': `Bearer ${token}`
     })
 

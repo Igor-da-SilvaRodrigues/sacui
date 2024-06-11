@@ -16,10 +16,9 @@ export const useGetChamadoById = (url, params, chamadoId, token) => {
 
   //não executar nada por padrão, porque o ID pode estar nulo
   const [shouldExecute, setShouldExecute] = useState(false);
-  const effectiveUrl = `${url}/${chamadoId}`; // definindo url do request
 
   const { isLoading, isError, error, statusCode, response } = useGet(
-    effectiveUrl,
+    `${url}/${chamadoId}?`,
     params,
     {
       Authorization: `Bearer ${token}`,
