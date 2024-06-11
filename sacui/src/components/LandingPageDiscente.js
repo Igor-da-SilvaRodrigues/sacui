@@ -24,7 +24,7 @@ const LandingPageDiscente = ({ user, url, token }) => {
     <>
       {target === "" && page}
       {target === "abrirChamado" && <AberturaChamadoDiscente user={user} url={url} token={token}></AberturaChamadoDiscente>}
-      {target === "verificarChamado" && <VerificarChamadoDiscente></VerificarChamadoDiscente>}
+      {target === "verificarChamado" && <VerificarChamadoDiscente user={user} url={url} token={token}></VerificarChamadoDiscente>}
     </>
     
     

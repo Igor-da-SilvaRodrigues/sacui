@@ -1,51 +1,123 @@
 import Footer from "./Footer";
 import Header from "./Header";
 
-const VerificarChamadoDiscente = () => {
-  const chamados = [
-    { id: 0, protocolo: 123456789 },
-    { id: 1, protocolo: 987654321 },
-    { id: 2, protocolo: 256969691 },
-  ];
+import { useGetChamadosByUser } from "../hooks/useGetChamadosByUser";
+import { useState } from "react";
+import { useGetChamadoById } from "../hooks/useGetChamadoById";
+import AberturaChamadoDiscente from "./AberturaChamadoDiscente";
 
-  const status = "Aberto";
+const VerificarChamadoDiscente = ({ user, url, token }) => {
+    const status = "Aberto";
+    const [selectedChamadoId, setSelectedChamadoId] = useState("");
 
-  return (
-    <div>
-      <Header />
-      <h1>Verificar Chamados</h1>
-      <label>
-        <select
-          name="chamados"
-          style={{ marginTop: "20px", fontSize: "medium" }}
+    const [target, setTarget] = useState(""); // alvo de navegação / renderização
+
+    //resgatando todos os chamados do discente
+    const {
+        isLoading: isLoadingGetChamados,
+        isError: isErrorGetChamados,
+        error: errorGetChamados,
+        statusCode: statusCodeGetChamados,
+        chamados,
+    } = useGetChamadosByUser(
+        `${url}/chamado/usuario`,
+        null,
+        user["matricula"],
+        token
+    );
+
+    //resgatando detalhes do chamado selecionado (pode ser nulo)
+    const {
+        isLoading: isLoadingChamado,
+        isError: isErrorChamado,
+        error: errorChamado,
+        statusCode: statusCodeChamado,
+        chamado: selectedChamado,
+    } = useGetChamadoById(`${url}/chamado`, null, selectedChamadoId, token);
+
+    const handleSelectChamadoChange = (e) => {
+        chamados &&
+            setSelectedChamadoId(
+                chamados.find(
+                    (chamado) =>
+                        chamado["inicial"]["protocolo"] === e.target.value
+                )["inicial"]["protocolo"]
+            );
+    };
+
+    const statusOf = (code) => {
+        switch (code) {
+            case 0:
+                return "Fechado";
+            case 1:
+                return "Em Andamento";
+            case 2:
+                return "Aberto";
+            case 3:
+                return "Retornado";
+        }
+    };
+
+    const page = (<div>
+        <Header />
+        <h1>Verificar Chamados</h1>
+        <label>
+            <select
+                name="chamados"
+                style={{ marginTop: "20px", fontSize: "medium" }}
+                onChange={handleSelectChamadoChange}
+            >
+                {chamados &&
+                    chamados.map((chamado, key) => (
+                        <option
+                            key={key}
+                            value={chamado["inicial"]["protocolo"]}
+                        >
+                            {chamado["inicial"]["protocolo"]}
+                        </option>
+                    ))}
+            </select>
+        </label>
+        <h3>
+            Status: {selectedChamado && statusOf(selectedChamado["status"])}
+        </h3>
+        <h3>Parecer: {selectedChamado && selectedChamado["parecer"]}</h3>
+        <p
+            style={{
+                color: "#000",
+                fontSize: "medium",
+                width: "500px",
+                marginTop: "6px",
+                margin: "0 auto",
+            }}
         >
-          {chamados.map((chamado) => (
-            <option value={chamado.id}>{chamado.protocolo}</option>
-          ))}
-        </select>
-      </label>
-      <h3>Status: {status}</h3>
-      <h3>Parecer:</h3>
-      <p
-        style={{
-          color: "#000",
-          fontSize: "medium",
-          width: "500px",
-          marginTop: "6px",
-          margin: "0 auto",
-        }}
-      >
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni quam
-        adipisci ipsam? Vitae modi amet eveniet debitis. Ratione, molestias eius
-        totam facere et hic saepe rerum possimus itaque, natus veritatis! Lorem
-        ipsum dolor sit amet consectetur adipisicing elit. Sequi incidunt
-        eveniet ea tenetur, beatae ratione fugit necessitatibus rerum impedit!
-        Error officia modi quod minima sed est aliquam in alias quas!
-      </p>
-      <button name="novo">Novo</button>
-      <Footer pos="fixed" bot={0} />
-    </div>
-  );
+            STATUS: {selectedChamado && statusOf(selectedChamado["status"])}
+        </p>
+        <p
+            style={{
+                color: "#000",
+                fontSize: "medium",
+                width: "500px",
+                marginTop: "6px",
+                margin: "0 auto",
+            }}
+        >
+            PARECER: {selectedChamado && selectedChamado["parecer"]}
+        </p>
+        {/* Indicador de carregamento, estilizar como desejado... */}
+        {(isLoadingGetChamados || isLoadingChamado) && (
+            <h1>Carregando...</h1>
+        )}
+        <button name="novo" onClick={()=>{setTarget("abrirChamado")}}>Novo</button>
+        <Footer pos="fixed" bot={0} />
+    </div>);
+
+    return (
+        <>
+            {target === "" && page}
+            {target === "abrirChamado" && <AberturaChamadoDiscente user={user} url={url} token={token}></AberturaChamadoDiscente>}
+        </>
+    );
 };
 
 export default VerificarChamadoDiscente;
