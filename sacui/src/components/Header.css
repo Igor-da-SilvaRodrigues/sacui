@@ -1,0 +1,57 @@
+.Header {
+    display: flex;
+    background-image: linear-gradient(to top, #063E63, #549BC7);
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+#logo {
+    display: flex;
+    filter: drop-shadow(0 0 2px #fff);
+}
+
+#titulo {
+    display: flex;
+}
+
+img {
+    height: 40px;
+    padding: 10px;
+    filter: drop-shadow(0 0 2px #fff);
+}
+
+h1 {
+    margin: 0;
+    color: #004580;
+    filter: drop-shadow(0 0 2px #fff);
+    align-content: center;
+}
+
+h2 {
+    margin: 0;
+    color: #fff;
+    filter: drop-shadow(0 0 2px #000);
+    align-content: center;
+}
+
+a {
+    color: #fff;
+    align-content: center;
+    padding: 10px;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+a:hover {
+    color: #fbff00;
+    filter: drop-shadow(0 0 2px #000);
+}
+
+#margem-inferior {
+    /* Altura do header: 33px */
+    margin-bottom: 39px;
+}

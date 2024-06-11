@@ -5,6 +5,7 @@ import TelaLogin from './components/TelaLogin';
 import { jwtDecode } from "jwt-decode";
 import { useFetchUserById } from './hooks/useFetchUserById';
 import HomeAdmin from './components/HomeAdmin';
+import LandingPageDiscente from './components/LandingPageDiscente';
 import './App.css';
 import {
   MDBContainer,
@@ -67,22 +68,9 @@ function App() {
 
   return (
     <>
-      {/* exibir cabeçalho quando logado */}
-      {isLoggedIn && (<MDBNavbar dark className='main-header p-0 '>
-        <MDBContainer fluid className='d-flex flex-row'>
-          <MDBNavbarBrand href='#'>
-            <img src='cefet_branco.png' className='logo' />
-            SAC
-          </MDBNavbarBrand>
-          <MDBBtn color="danger" size="sm" type='button'>
-            Sair da sessão
-          </MDBBtn>
-        </MDBContainer>
-      </MDBNavbar>)}
-      
       {/* exibir tela HomeAdmin quando logado como admin, A tela do aluno quando logado como aluno (ainda n feito), uma mensagem de erro caso erro, e a tela de login caso ainda não esteja logado */}
        {isLoggedIn ? 
-        user.usuarioAdm == true ? <HomeAdmin user={user} token={token} url={apiUrl}/> : <p>Você é aluno</p>
+        user.usuarioAdm == true ? <HomeAdmin user={user} token={token} url={apiUrl}/> : <LandingPageDiscente user={user} token={token} url={apiUrl}></LandingPageDiscente>
       :
         error != null ?
           <p>Erro {error}</p>

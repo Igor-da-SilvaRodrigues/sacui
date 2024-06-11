@@ -1,0 +1,14 @@
+.aberturaChamado {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    margin: 0 auto;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.submit {
+    width: fit-content;
+    margin: 0 auto;
+    font-size: medium;
+}
