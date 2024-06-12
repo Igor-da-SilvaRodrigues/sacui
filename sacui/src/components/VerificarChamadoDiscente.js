@@ -6,7 +6,16 @@ import { useState } from "react";
 import { useGetChamadoById } from "../hooks/useGetChamadoById";
 import AberturaChamadoDiscente from "./AberturaChamadoDiscente";
 
-const VerificarChamadoDiscente = ({ user, url, token }) => {
+/**
+ * Tela de verificação de chamado do discente
+ * @param {*} user o objeto de usuário
+ * @param {*} url a url da api
+ * @param {*} token o token da sessão
+ * @param {*} toAberturaChamadoDiscente callback de navegação do componente pai que sinaliza
+ * para que a tela AberturaChamadoDiscente seja renderizada. 
+ * @returns 
+ */
+const VerificarChamadoDiscente = ({ user, url, token, toAberturaChamadoDiscente }) => {
     const status = "Aberto";
     const [selectedChamadoId, setSelectedChamadoId] = useState("");
 
@@ -58,7 +67,8 @@ const VerificarChamadoDiscente = ({ user, url, token }) => {
         }
     };
 
-    const page = (<div>
+    return (
+        <div>
         <Header />
         <h1>Verificar Chamados</h1>
         <label>
@@ -108,15 +118,9 @@ const VerificarChamadoDiscente = ({ user, url, token }) => {
         {(isLoadingGetChamados || isLoadingChamado) && (
             <h1>Carregando...</h1>
         )}
-        <button name="novo" onClick={()=>{setTarget("abrirChamado")}}>Novo</button>
+        <button name="novo" onClick={()=>{toAberturaChamadoDiscente()}}>Novo</button>
         <Footer pos="fixed" bot={0} />
-    </div>);
-
-    return (
-        <>
-            {target === "" && page}
-            {target === "abrirChamado" && <AberturaChamadoDiscente user={user} url={url} token={token}></AberturaChamadoDiscente>}
-        </>
+    </div>
     );
 };
 

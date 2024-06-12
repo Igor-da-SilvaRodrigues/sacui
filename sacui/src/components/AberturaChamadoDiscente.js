@@ -53,7 +53,7 @@ const AberturaChamadoDiscente = ({ user, url, token }) => {
   const page = (
     <div>
       <Header />
-      <h1>Abertura de chamado:</h1>
+      <h1 style={{textAlign:'center'}}>Abertura de chamado:</h1>
       <label className="aberturaChamado">
         <span>Chamado</span>
         <select name="tipoChamado" defaultValue={"default"} onChange={handleSelectChamadoChange}>
@@ -87,7 +87,7 @@ const AberturaChamadoDiscente = ({ user, url, token }) => {
   return (
     <>
       {target === "" && page}
-      {target === "protocolo" && <ProtocoloChamado user={user} url={url} token={token} chamado={chamado} returnToParent={()=>{setTarget("")}}></ProtocoloChamado>}
+      {target === "protocolo" && <ProtocoloChamado chamado={chamado} returnToParent={()=>{setTarget("")}}></ProtocoloChamado>}
     </>
   );
 };
