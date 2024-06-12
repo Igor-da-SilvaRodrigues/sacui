@@ -13,9 +13,10 @@ import AberturaChamadoDiscente from "./AberturaChamadoDiscente";
  * @param {*} token o token da sessão
  * @param {*} toAberturaChamadoDiscente callback de navegação do componente pai que sinaliza
  * para que a tela AberturaChamadoDiscente seja renderizada. 
+ * @param {*} toHome callback de navegação que retorna ao menu principal / home / landing page
  * @returns 
  */
-const VerificarChamadoDiscente = ({ user, url, token, toAberturaChamadoDiscente }) => {
+const VerificarChamadoDiscente = ({ user, url, token, toAberturaChamadoDiscente, toHome }) => {
     const status = "Aberto";
     const [selectedChamadoId, setSelectedChamadoId] = useState("");
 
@@ -69,7 +70,7 @@ const VerificarChamadoDiscente = ({ user, url, token, toAberturaChamadoDiscente 
 
     return (
         <div>
-        <Header />
+        <Header toHome={toHome}/>
         <h1>Verificar Chamados</h1>
         <label>
             <select

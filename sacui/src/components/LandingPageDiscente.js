@@ -23,8 +23,8 @@ const LandingPageDiscente = ({ user, url, token }) => {
   return (
     <>
       {target === "" && page}
-      {target === "abrirChamado" && <AberturaChamadoDiscente user={user} url={url} token={token}></AberturaChamadoDiscente>}
-      {target === "verificarChamado" && <VerificarChamadoDiscente user={user} url={url} token={token} toAberturaChamadoDiscente={()=>{setTarget("abrirChamado")}}></VerificarChamadoDiscente>}
+      {target === "abrirChamado" && <AberturaChamadoDiscente user={user} url={url} token={token} toHome={()=>{setTarget("")}}></AberturaChamadoDiscente>}
+      {target === "verificarChamado" && <VerificarChamadoDiscente user={user} url={url} token={token} toAberturaChamadoDiscente={()=>{setTarget("abrirChamado")}} toHome={()=>{setTarget("")}}></VerificarChamadoDiscente>}
     </>
     
     

@@ -6,13 +6,14 @@ import React, { useEffect, useState } from 'react'
  * Tela de revisão do chamado que acabou de ser criado.
  * @param {*} chamado o objeto de chamado que acabou de ser criado 
  * @param {*} returnToParent callback para sinalizar ao componente pai que esta tela deve deixar de ser renderizada
+ * @param {*} toHome callback para retornar a home page
  * @returns 
  */
-const ProtocoloChamado = ({ chamado, returnToParent}) => {
+const ProtocoloChamado = ({ chamado, returnToParent, toHome}) => {
 
   return (
     <div>
-      <Header />
+      <Header toHome={toHome}/>
       <h1 style={{textAlign:'center'}}>Chamado {chamado["protocolo"]}:</h1>
       <div className="detalheChamado">
         <p style={{ color: "#000", fontSize: "medium", width: "500px", marginTop: "6px", margin: "0 auto", }}>
