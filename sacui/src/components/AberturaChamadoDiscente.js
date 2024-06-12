@@ -7,7 +7,15 @@ import { useCreateChamado } from '../hooks/useCreateChamado';
 import "./AberturaChamadoDiscente.css";
 import ProtocoloChamado from './ProtocoloChamado'
 
-const AberturaChamadoDiscente = ({ user, url, token }) => {
+/**
+ * Tela de abertura de chamado do discente
+ * @param {*} user O objeto do usuário
+ * @param {*} url a url da api
+ * @param {*} token o token de sessão
+ * @param {*} toHome callback para retornar à home page
+ * @returns 
+ */
+const AberturaChamadoDiscente = ({ user, url, token, toHome }) => {
   const { isLoading: isLoadingTipoChamado, isError: isErrorTipoChamado, error: errorTipoChamado, statusCode: statusCodeTipoChamado, tipos } = useGetAllTipoChamado(`${url}/tipochamado?`, token)
   const [selectedTipo, setSelectedTipo] = useState(null)
   const [selectedMotivo, setSelectedMotivo] = useState(null)
@@ -52,8 +60,8 @@ const AberturaChamadoDiscente = ({ user, url, token }) => {
 
   const page = (
     <div>
-      <Header />
-      <h1>Abertura de chamado:</h1>
+      <Header toHome={toHome}/>
+      <h1 style={{textAlign:'center'}}>Abertura de chamado:</h1>
       <label className="aberturaChamado">
         <span>Chamado</span>
         <select name="tipoChamado" defaultValue={"default"} onChange={handleSelectChamadoChange}>
@@ -87,7 +95,7 @@ const AberturaChamadoDiscente = ({ user, url, token }) => {
   return (
     <>
       {target === "" && page}
-      {target === "protocolo" && <ProtocoloChamado user={user} url={url} token={token} chamado={chamado} returnToParent={()=>{setTarget("")}}></ProtocoloChamado>}
+      {target === "protocolo" && <ProtocoloChamado chamado={chamado} returnToParent={()=>{setTarget("")}} toHome={toHome}></ProtocoloChamado>}
     </>
   );
 };
