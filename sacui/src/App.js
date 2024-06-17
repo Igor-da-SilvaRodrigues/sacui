@@ -3,16 +3,10 @@ import React, { useState } from 'react';
 import TelaLogin from './components/TelaLogin';
 
 import { jwtDecode } from "jwt-decode";
-import { useFetchUserById } from './hooks/useFetchUserById';
 import HomeAdmin from './components/HomeAdmin';
 import LandingPageDiscente from './components/LandingPageDiscente';
 import './App.css';
-import {
-  MDBContainer,
-  MDBNavbar,
-  MDBNavbarBrand,
-  MDBBtn
-} from 'mdb-react-ui-kit';
+
 
 function App() {
   const apiUrl = "http://localhost:8080/sac/api"
