@@ -352,11 +352,6 @@ const LandingPageDocente = ({ user, url, token }) => {
                             name="dataFinal"
                             onChange={handleDataFimChangeAberto}
                         />
-                        <input
-                            type="submit"
-                            value="Ok"
-                            style={{ marginLeft: "10px", borderRadius: "10px" }}
-                        />
                     </div>
                 )}
                 {/* Table de chamados em andamento */}
@@ -446,11 +441,6 @@ const LandingPageDocente = ({ user, url, token }) => {
                         <input type="date" name="dataInicial" onChange={handleDataInicioChangeEmAndamento}/>
                         <p style={{ color: "#000", fontSize: "medium" }}>até</p>
                         <input type="date" name="dataFinal" onChange={handleDataFimChangeEmAndamento} />
-                        <input
-                            type="submit"
-                            value="Ok"
-                            style={{ marginLeft: "10px", borderRadius: "10px" }}
-                        />
                     </div>
                 )}
                 {/* Table de chamados retornados */}
@@ -539,12 +529,7 @@ const LandingPageDocente = ({ user, url, token }) => {
                     >
                         <input type="date" name="dataInicial" onChange={handleDataInicioChangeRetornado}/>
                         <p style={{ color: "#000", fontSize: "medium" }}>até</p>
-                        <input type="date" name="dataFinal" onChange={handleDataInicioChangeRetornado}/>
-                        <input
-                            type="submit"
-                            value="Ok"
-                            style={{ marginLeft: "10px", borderRadius: "10px" }}
-                        />
+                        <input type="date" name="dataFinal" onChange={handleDataFimChangeRetornado}/>
                     </div>
                 )}
                 {/* Table de chamados encerrados */}
@@ -634,11 +619,6 @@ const LandingPageDocente = ({ user, url, token }) => {
                         <input type="date" name="dataInicial" onChange={handleDataInicioChangeFechado}/>
                         <p style={{ color: "#000", fontSize: "medium" }}>até</p>
                         <input type="date" name="dataFinal" onChange={handleDataFimChangeFechado}/>
-                        <input
-                            type="submit"
-                            value="Ok"
-                            style={{ marginLeft: "10px", borderRadius: "10px" }}
-                        />
                     </div>
                 )}
                 <div>
