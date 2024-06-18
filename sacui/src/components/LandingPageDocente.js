@@ -5,6 +5,8 @@ import Header from "./Header";
 import { useGetChamadoByStatusAndDataAbertura } from "../hooks/useGetChamadoByStatusAndDataAbertura";
 
 import { ChamadoStatus } from "../enums/ChamadoStatus";
+import RevisarChamadoDocente from "./RevisarChamadoDocente";
+import CriarNovoChamado from './CriarNovoChamado';
 
 /**
  *
@@ -15,6 +17,7 @@ import { ChamadoStatus } from "../enums/ChamadoStatus";
  */
 const LandingPageDocente = ({ user, url, token }) => {
     const [selectedList, setSelectedList] = useState([]);
+    const [navigationTarget, setNavigationTarget] = useState("");
 
     //estado dos chamados abertos
     const [showDatesAberto, setShowDatesAberto] = useState(false);
@@ -83,8 +86,6 @@ const LandingPageDocente = ({ user, url, token }) => {
       paramRetornado, //params
       token
     );
-
-    const adm = { name: "Bob", mat: 123456 };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
     //handler para o radio group de datas dos chamados abertos
@@ -257,7 +258,14 @@ const LandingPageDocente = ({ user, url, token }) => {
         console.log(selectedList)
     },[selectedList])
 
-    return (
+    const navigateToRevisar = () => {
+        if (selectedList.length == 0){
+            alert("Selecione pelo menos um chamado para continuar.")
+        }else{
+            setNavigationTarget("revisar")
+        }
+    }
+    const page = (
         <div style={{ display: "flex", flexDirection: "column" }}>
             <Header />
             <div
@@ -637,13 +645,21 @@ const LandingPageDocente = ({ user, url, token }) => {
                     </div>
                 )}
                 <div>
-                    <button>Revisar</button>
-                    <button>Criar novo chamado</button>
+                    <button onClick={(e) => navigateToRevisar()}>Revisar</button>
+                    <button onClick={(e) => {setNavigationTarget("novoChamado")}}>Criar novo chamado</button>
                 </div>
             </div>
 
             <Footer mtop="10px" />
         </div>
+    );
+
+    return (
+        <>
+            {navigationTarget === "" && page}
+            {navigationTarget === "revisar" && <RevisarChamadoDocente></RevisarChamadoDocente>}
+            {navigationTarget === "novoChamado" && <CriarNovoChamado></CriarNovoChamado>}
+        </>
     );
 };
 
