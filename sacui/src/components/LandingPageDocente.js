@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./LandingPageDocente.css";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -14,6 +14,7 @@ import { ChamadoStatus } from "../enums/ChamadoStatus";
  * @returns
  */
 const LandingPageDocente = ({ user, url, token }) => {
+    const [selectedList, setSelectedList] = useState([]);
 
     //estado dos chamados abertos
     const [showDatesAberto, setShowDatesAberto] = useState(false);
@@ -242,6 +243,20 @@ const LandingPageDocente = ({ user, url, token }) => {
         setParamRetornado({ ...paramRetornado, dataFim: e.target.value });
     };
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    const addOrRemoveSelection = (event, protocolo) => {
+        if (event.target.checked){
+            setSelectedList([...selectedList,protocolo]);
+        }else{
+            //define a lista como todos os itens que não são iguais ao protocolo, removendo-o
+            setSelectedList(selectedList.filter((i)=>{return i!=protocolo}))
+        }
+    }
+
+    useEffect(()=>{
+        console.log(selectedList)
+    },[selectedList])
+
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
             <Header />
@@ -287,7 +302,7 @@ const LandingPageDocente = ({ user, url, token }) => {
                             chamadosAberto.map((aberto, index) => (
                                 <tr key={aberto.protocolo}>
                                     <td>
-                                        <input type="checkbox" />
+                                        <input type="checkbox" onChange={(e) => addOrRemoveSelection(e, aberto.protocolo)}/>
                                     </td>
                                     <td>{aberto.protocolo}</td>
                                     <td>{aberto.prioridade}</td>
@@ -384,7 +399,7 @@ const LandingPageDocente = ({ user, url, token }) => {
                         {chamadosEmAndamento && chamadosEmAndamento.map((chamado, index) => (
                             <tr key={chamado.protocolo}>
                                 <td>
-                                    <input type="checkbox" />
+                                    <input type="checkbox" onChange={(e) => addOrRemoveSelection(e, chamado.protocolo)}/>
                                 </td>
                                 <td>{chamado.protocolo}</td>
                                 <td>{chamado.prioridade}</td>
@@ -473,7 +488,7 @@ const LandingPageDocente = ({ user, url, token }) => {
                         {chamadosRetornado && chamadosRetornado.map((chamado, index) => (
                             <tr key={chamado.protocolo}>
                                 <td>
-                                    <input type="checkbox" />
+                                    <input type="checkbox" onChange={(e) => addOrRemoveSelection(e, chamado.protocolo)}/>
                                 </td>
                                 <td>{chamado.protocolo}</td>
                                 <td>{chamado.prioridade}</td>
@@ -562,7 +577,7 @@ const LandingPageDocente = ({ user, url, token }) => {
                         {chamadosFechado && chamadosFechado.map((chamado, index) => (
                             <tr key={chamado.protocolo}>
                                 <td>
-                                    <input type="checkbox" />
+                                    <input type="checkbox" onChange={(e) => addOrRemoveSelection(e, chamado.protocolo)}/>
                                 </td>
                                 <td>{chamado.protocolo}</td>
                                 <td>{chamado.prioridade}</td>
