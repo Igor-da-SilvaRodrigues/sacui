@@ -84,7 +84,6 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
   
   //mudando status do novo chamado
   const handleStatusChange = (e) => {
-    console.log(`Changing status to ${e.target.value}`)
     const lista = [...newChamadoList]
     const chamado = {...newChamadoList[selectedIndex], status: e.target.value}
 
@@ -94,7 +93,6 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
 
   //mudando o setor do novo chamado
   const handleSetorChange = (e) => {
-    console.log(`Changing setor to ${e.target.value}`)
     const lista = [...newChamadoList]
     const chamado = {...newChamadoList[selectedIndex], setor: e.target.value}
 
@@ -103,7 +101,6 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
   }
 
   const handleParecerChange = (e) => {
-    console.log(`Changing parecer to ${e.target.value}`)
     const lista = [...newChamadoList]
     const chamado = {...newChamadoList[selectedIndex], parecer: e.target.value}
 
@@ -128,11 +125,9 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
   }
   
   const saveChanges = async () => {
-    console.log("Perguntou")
     setDisplayModal(true)
   }
   const cancelChanges = async () => {
-    console.log("CANCELOU :(")
     setDisplayModal(false)
   }
 
@@ -152,8 +147,9 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
         body.idSetor = list[i].setor
       }
       
-
-      commitUpdate(body);
+      if(list[i].originalStatus != ChamadoStatus.FECHADO){
+        commitUpdate(body);
+      }
     }
     setDisplayModal(false)
   }
