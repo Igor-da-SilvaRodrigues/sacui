@@ -49,7 +49,6 @@ export const useGet = (url, params, headers, shouldExecute = true) => {
                 setError(error);
                 setIsError(true);
             }finally{
-                console.log("UseGet finished")
                 setIsLoading(false);
             }
         }
