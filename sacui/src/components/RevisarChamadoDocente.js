@@ -7,6 +7,7 @@ import { useGetChamadoById } from "../hooks/useGetChamadoById";
 import { useGetAllSetores } from "../hooks/useGetAllSetores";
 import { ChamadoStatus, statusFromString } from "../enums/ChamadoStatus";
 import ConfirmModal from "./ConfirmModal";
+import { useUpdateChamado } from "../hooks/useUpdateChamado";
 
 /**
  * 
@@ -26,7 +27,9 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
 
   const { isLoading: isLoadingChamado, isError: isErroChamado, error: errorChamado, statusCode: statusCodeChamado, chamado } = useGetChamadoById(`${url}/chamado`, chamados[selectedIndex], token, shouldFetchList[selectedIndex]);
   const { isLoading: isLoadingSetores, isError: isErrorSetores, error: errorSetores, statusCode: statusCodeSetores, setores } = useGetAllSetores(`${url}/setor`, token);
-
+  const {commit: commitUpdate, isLoading: isLoadingUpdate, isError: isErrorUpdate, error: errorUpdate, statusCode: statusCodeUpdate} = useUpdateChamado(`${url}/chamado`, token)
+  const [displayModal, setDisplayModal] = useState(false)
+  
 
   //definindo os valores dos novos chamados que serão inseridos na API como uma atualizações
   //inicialmente eles tem o valor do chamado selecionado, mas são """"mutável"""".
@@ -51,6 +54,7 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
     //inserimos ele na lista de trabalho
     if (newChamadoList[selectedIndex] == null){
       lista[selectedIndex] = {...chamado}
+      lista[selectedIndex].originalStatus = chamado.status
 
       //a partir de agora essa posição está preenchida e não deverá ser substituída por requisições da api
       //para evitar requisições desnecessárias na API marcaremos este índice como false na lista 'shouldFetchList'
@@ -122,7 +126,7 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
       setSelectedIndex(selectedIndex + 1)
     }
   }
-  const [displayModal, setDisplayModal] = useState(false)
+  
   const saveChanges = async () => {
     console.log("Perguntou")
     setDisplayModal(true)
@@ -131,16 +135,35 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
     console.log("CANCELOU :(")
     setDisplayModal(false)
   }
+
   const confirmChanges = async () => {
-    console.log("confirmou")
+    const list = [...newChamadoList]
+
+    for (let i = 0; i < list.length; i++){
+      const body = {}
+      body.idUsuario = user.matricula
+      body.protocolo = list[i].protocolo
+      body.status = Number(list[i].status)
+      
+      if(list[i].parecer){
+        body.parecer = list[i].parecer
+      }
+      if(list[i].setor){
+        body.idSetor = list[i].setor
+      }
+      
+
+      commitUpdate(body);
+    }
     setDisplayModal(false)
   }
 
   return (
     <div>
       <ConfirmModal shouldDisplay={displayModal} text="Você tem certeza de que deseja confirmar essas mudanças? Essa ação não pode ser desfeita!" onYes={confirmChanges} onNo={cancelChanges}>
-        <div>{newChamadoList && newChamadoList.map((chamado) => (
+        <div>{newChamadoList && newChamadoList.map((chamado,index) => (
           <div style={{margin: "10px", border: "1px solid lightgray", color:"black", padding:"5px"}}>
+            <div style={{color:"red", display:((chamado.originalStatus == ChamadoStatus.FECHADO) ? "block" : "none")}}>Chamado encerrado, não será alterado!</div>
             <div>
               <h5 style={{display:"inline-block"}}>Protocolo:</h5>
               <span style={{color:"black", fontWeight:"normal", marginLeft: '10px'}}>{chamado.protocolo}</span>
@@ -160,6 +183,7 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
           </div>
         ))}</div>
       </ConfirmModal>
+
       <Header />
       <WaterMark />
       <h1 style={{ marginBottom: "10px" }}>Revisar Chamados - {`(${selectedIndex+1}/${chamados.length})`}</h1>
@@ -174,14 +198,22 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
         </div>
         <div className="revisao">
           <h3>Setor responsável:</h3>
+
           {/* essa expressão seta o Setor responsável como ele achou no chamado resgatado, mas apenas se o chamado e o status não forem nulos */}
-          <select name="responsavel" value={(newChamadoList[selectedIndex] == null || newChamadoList[selectedIndex].setor == null) ? "" : newChamadoList[selectedIndex].setor} onChange={handleSetorChange}>
+          <select 
+            name="responsavel"
+            value={(newChamadoList[selectedIndex] == null || newChamadoList[selectedIndex].setor == null) ? "" : newChamadoList[selectedIndex].setor}
+            onChange={handleSetorChange}
+            disabled={newChamadoList && newChamadoList[selectedIndex] && newChamadoList[selectedIndex].originalStatus == ChamadoStatus.FECHADO}
+          >
             {setores && setores.map((setor) => (
               <option key={setor.setor} value={setor.setor}>{setor.setor}</option>
             ))}
             <option key ={""} value={""}>Nenhum</option>
           </select>
+
           <h3>Parecer:</h3>
+
           <textarea className="nota"
             name="parecer"
             placeholder="Nota técnica."
@@ -190,14 +222,23 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
             cols={50}
             style={{ resize: "none" }}
             onChange={handleParecerChange}
+            disabled={newChamadoList && newChamadoList[selectedIndex] && newChamadoList[selectedIndex].originalStatus == ChamadoStatus.FECHADO}
           ></textarea>
+
           <h3>Status:</h3>
+
           {/* essa expressão seta o status como ele achou, mas apenas se o chamado e o status não forem nulos */}
-          <select name="status" value={(newChamadoList[selectedIndex] == null || newChamadoList[selectedIndex].status == null) ? "" : newChamadoList[selectedIndex].status} onChange={handleStatusChange}>
+          <select 
+            name="status"
+            value={(newChamadoList[selectedIndex] == null || newChamadoList[selectedIndex].status == null) ? "" : newChamadoList[selectedIndex].status}
+            onChange={handleStatusChange}
+            disabled={newChamadoList && newChamadoList[selectedIndex] && newChamadoList[selectedIndex].originalStatus == ChamadoStatus.FECHADO}
+          >
             {status.map((status) => (
               <option key={status} value={statusFromString(status)}>{status}</option>
             ))}
           </select>
+
         </div>
       </div>
       <button onClick={prevChamado}>Anterior</button>
