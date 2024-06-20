@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./LandingPageDocente.css";
 import Footer from "./Footer";
 import Header from "./Header";
 import { useGetChamadoByStatusAndDataAbertura } from "../hooks/useGetChamadoByStatusAndDataAbertura";
 
 import { ChamadoStatus } from "../enums/ChamadoStatus";
+import RevisarChamadoDocente from "./RevisarChamadoDocente";
+import CriarNovoChamado from './CriarNovoChamado';
 
 /**
  *
@@ -14,6 +16,8 @@ import { ChamadoStatus } from "../enums/ChamadoStatus";
  * @returns
  */
 const LandingPageDocente = ({ user, url, token }) => {
+    const [selectedList, setSelectedList] = useState([]);
+    const [navigationTarget, setNavigationTarget] = useState("");
 
     //estado dos chamados abertos
     const [showDatesAberto, setShowDatesAberto] = useState(false);
@@ -82,8 +86,6 @@ const LandingPageDocente = ({ user, url, token }) => {
       paramRetornado, //params
       token
     );
-
-    const adm = { name: "Bob", mat: 123456 };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
     //handler para o radio group de datas dos chamados abertos
@@ -242,7 +244,40 @@ const LandingPageDocente = ({ user, url, token }) => {
         setParamRetornado({ ...paramRetornado, dataFim: e.target.value });
     };
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
-    return (
+
+    const addOrRemoveSelection = (event, protocolo) => {
+        if (event.target.checked){
+            setSelectedList([...selectedList,protocolo]);
+        }else{
+            //define a lista como todos os itens que não são iguais ao protocolo, removendo-o
+            setSelectedList(selectedList.filter((i)=>{return i!=protocolo}))
+        }
+    }
+
+    useEffect(()=>{
+        console.log(selectedList)
+    },[selectedList])
+
+    const navigateToRevisar = () => {
+        if (selectedList.length == 0){
+            alert("Selecione pelo menos um chamado para continuar.")
+        }else{
+            setNavigationTarget("revisar")
+        }
+    }
+
+    const returnToThis = () => {
+        setSelectedList([]);
+        setNavigationTarget("");
+        
+        //chamado set para forçar a atualização das tabelas
+        setParamAberto({...paramAberto})
+        setParamEmAndamento({...paramEmAndamento})
+        setParamFechado({...paramFechado})
+        setParamRetornado({...paramRetornado})
+
+    }
+    const page = (
         <div style={{ display: "flex", flexDirection: "column" }}>
             <Header />
             <div
@@ -287,7 +322,7 @@ const LandingPageDocente = ({ user, url, token }) => {
                             chamadosAberto.map((aberto, index) => (
                                 <tr key={aberto.protocolo}>
                                     <td>
-                                        <input type="checkbox" />
+                                        <input type="checkbox" checked={selectedList.includes(aberto.protocolo)} onChange={(e) => addOrRemoveSelection(e, aberto.protocolo)}/>
                                     </td>
                                     <td>{aberto.protocolo}</td>
                                     <td>{aberto.prioridade}</td>
@@ -384,7 +419,7 @@ const LandingPageDocente = ({ user, url, token }) => {
                         {chamadosEmAndamento && chamadosEmAndamento.map((chamado, index) => (
                             <tr key={chamado.protocolo}>
                                 <td>
-                                    <input type="checkbox" />
+                                    <input type="checkbox" onChange={(e) => addOrRemoveSelection(e, chamado.protocolo)}/>
                                 </td>
                                 <td>{chamado.protocolo}</td>
                                 <td>{chamado.prioridade}</td>
@@ -473,7 +508,7 @@ const LandingPageDocente = ({ user, url, token }) => {
                         {chamadosRetornado && chamadosRetornado.map((chamado, index) => (
                             <tr key={chamado.protocolo}>
                                 <td>
-                                    <input type="checkbox" />
+                                    <input type="checkbox" onChange={(e) => addOrRemoveSelection(e, chamado.protocolo)}/>
                                 </td>
                                 <td>{chamado.protocolo}</td>
                                 <td>{chamado.prioridade}</td>
@@ -562,7 +597,7 @@ const LandingPageDocente = ({ user, url, token }) => {
                         {chamadosFechado && chamadosFechado.map((chamado, index) => (
                             <tr key={chamado.protocolo}>
                                 <td>
-                                    <input type="checkbox" />
+                                    <input type="checkbox" onChange={(e) => addOrRemoveSelection(e, chamado.protocolo)}/>
                                 </td>
                                 <td>{chamado.protocolo}</td>
                                 <td>{chamado.prioridade}</td>
@@ -622,13 +657,21 @@ const LandingPageDocente = ({ user, url, token }) => {
                     </div>
                 )}
                 <div>
-                    <button>Revisar</button>
-                    <button>Criar novo chamado</button>
+                    <button onClick={(e) => navigateToRevisar()}>Revisar</button>
+                    <button onClick={(e) => {setNavigationTarget("novoChamado")}}>Criar novo chamado</button>
                 </div>
             </div>
 
             <Footer mtop="10px" />
         </div>
+    );
+
+    return (
+        <>
+            {navigationTarget === "" && page}
+            {navigationTarget === "revisar" && <RevisarChamadoDocente user={user} url={url} token={token} chamados={selectedList} returnToParent={returnToThis}></RevisarChamadoDocente>}
+            {navigationTarget === "novoChamado" && <CriarNovoChamado></CriarNovoChamado>}
+        </>
     );
 };
 
