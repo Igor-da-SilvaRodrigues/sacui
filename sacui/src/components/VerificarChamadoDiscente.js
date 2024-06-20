@@ -2,7 +2,7 @@ import Footer from "./Footer";
 import Header from "./Header";
 
 import { useGetChamadosByUser } from "../hooks/useGetChamadosByUser";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGetChamadoById } from "../hooks/useGetChamadoById";
 import AberturaChamadoDiscente from "./AberturaChamadoDiscente";
 
@@ -36,6 +36,14 @@ const VerificarChamadoDiscente = ({ user, url, token, toAberturaChamadoDiscente,
         token
     );
 
+    useEffect(()=>{
+        //setando o chamado selecionado como o primero da fila assim que a requisição terminar
+        if(!isErrorGetChamados && statusCodeGetChamados == 200 && chamados){
+            console.log("Terminou!")
+            setSelectedChamadoId(chamados[0]["inicial"]["protocolo"])
+        }
+    }, [isErrorGetChamados, statusCodeGetChamados, chamados])
+
     //resgatando detalhes do chamado selecionado (pode ser nulo)
     const {
         isLoading: isLoadingChamado,
@@ -43,7 +51,7 @@ const VerificarChamadoDiscente = ({ user, url, token, toAberturaChamadoDiscente,
         error: errorChamado,
         statusCode: statusCodeChamado,
         chamado: selectedChamado,
-    } = useGetChamadoById(`${url}/chamado`, null, selectedChamadoId, token);
+    } = useGetChamadoById(`${url}/chamado`, selectedChamadoId, token);
 
     const handleSelectChamadoChange = (e) => {
         chamados &&
