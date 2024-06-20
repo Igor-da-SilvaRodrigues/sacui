@@ -20,3 +20,19 @@ export const statusFromString = (string) => {
             throw new Error(`Illegal argument ${s}`)
     }
 }
+
+export const statusToString = function(code){
+    const c = Number(code)
+    switch (c) {
+        case 0:
+            return "Fechado"
+        case 1:
+            return "Em andamento"
+        case 2:
+            return "Aberto"
+        case 3:
+            return "Retornado"
+        default:
+            throw new Error(`Illegal argument ${c}`)
+    }
+}
