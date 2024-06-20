@@ -670,7 +670,7 @@ const LandingPageDocente = ({ user, url, token }) => {
         <>
             {navigationTarget === "" && page}
             {navigationTarget === "revisar" && <RevisarChamadoDocente user={user} url={url} token={token} chamados={selectedList} returnToParent={returnToThis}></RevisarChamadoDocente>}
-            {navigationTarget === "novoChamado" && <CriarNovoChamado></CriarNovoChamado>}
+            {navigationTarget === "novoChamado" && <CriarNovoChamado user={user} url={url} token={token} returnToParent={returnToThis}></CriarNovoChamado>}
         </>
     );
 };
