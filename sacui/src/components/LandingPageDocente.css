@@ -1,0 +1,15 @@
+  table{
+    margin-top: 25px;
+  }
+
+  tr {
+    border-bottom: 1px solid gray; /* Borda inferior de 1px sólida cinza claro para cada linha */
+  }
+  
+  td, th {
+    border: 1px solid gray; /* Borda de 1px sólida cinza claro para cada célula */
+    padding: 5px; /* Espaço interno nas células */
+  }
+  tr:nth-child(odd) { /* Target odd rows (1st, 3rd, etc.) */
+    background-color: #549bc736; /* Light blue shade for odd rows */
+  }

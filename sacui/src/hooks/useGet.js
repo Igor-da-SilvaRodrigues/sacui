@@ -26,10 +26,18 @@ export const useGet = (url, params, headers, shouldExecute = true) => {
         const doGet = async()=>{
             setIsLoading(true);
             setIsError(false);
+            
+            //ignorando parâmetros nulos 
+            let filteredParams = {}
+            for (let key in params){
+                if(params[key] !== null){
+                    filteredParams[key] = params[key]
+                }
+            }
 
             try{
                 const response = await fetch(
-                    url + new URLSearchParams(params),
+                    url + new URLSearchParams(filteredParams),
                     {
                         method: "GET",
                         headers: headers,

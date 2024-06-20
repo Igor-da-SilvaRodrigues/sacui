@@ -6,32 +6,32 @@ import { useGet } from "./useGet";
  *
  * Consome o endpoint {@link https://igor-da-silvarodrigues.github.io/sacapi/#/Chamado/getChamadoById getChamadoById}
  * @param {*} url a url do endpoint
- * @param {*} params os parametros de query que controlam a paginação. Se nulo, não haverá paginação.
  * @param {*} chamadoId O Id do chamado que deseja resgatar as informações
  * @param {*} token o token de sessão
+ * @param {*} shouldExecute Impede a execução do request caso false. Default=true
  * @returns
  */
-export const useGetChamadoById = (url, params, chamadoId, token) => {
+export const useGetChamadoById = (url, chamadoId, token, shouldExecute=true) => {
   const [chamado, setChamado] = useState(null);
 
   //não executar nada por padrão, porque o ID pode estar nulo
-  const [shouldExecute, setShouldExecute] = useState(false);
+  const [shouldFetch, setShouldFetch] = useState(false);
 
   const { isLoading, isError, error, statusCode, response } = useGet(
     `${url}/${chamadoId}?`,
-    params,
+    null,
     {
       Authorization: `Bearer ${token}`,
     },
-    shouldExecute
+    shouldExecute && shouldFetch
   );
 
   //ativando a funcionalidade se  o chamado não for nulo, e desativando caso seja
   useEffect(() => {
     if (chamadoId === null || chamadoId === "") {
-      setShouldExecute(false);
+      setShouldFetch(false);
     } else {
-      setShouldExecute(true);
+      setShouldFetch(true);
     }
   }, [chamadoId]);
 
