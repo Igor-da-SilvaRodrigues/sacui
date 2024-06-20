@@ -8,7 +8,7 @@ import { useGetAllSetores } from "../hooks/useGetAllSetores";
 import { ChamadoStatus, statusFromString } from "../enums/ChamadoStatus";
 import ConfirmModal from "./ConfirmModal";
 import { useUpdateChamado } from "../hooks/useUpdateChamado";
-
+import Historico from "./Historico";
 /**
  * 
  * @param {*} user  O objeto de usuário
@@ -263,7 +263,7 @@ const RevisarChamadoDocente = ({ user, url, token, chamados, returnToParent }) =
       </div>
       <button onClick={prevChamado}>Anterior</button>
       <button onClick={nextChamado}>Próximo</button>
-      <button>Histórico</button>
+      <button onClick={()=>{setNavigationTarget("historico")}}>Histórico</button>
       <button onClick={saveChanges}>Salvar</button>
       <button onClick={requestClose}>Fechar</button>
       <Footer pos={"fixed"} bot={0} />
@@ -273,6 +273,7 @@ const RevisarChamadoDocente = ({ user, url, token, chamados, returnToParent }) =
   return (
     <>
         {navigationTarget === "" && page}
+        {navigationTarget === "historico" && <Historico user={user} url={url} token={token} protocolo={chamados[selectedIndex]} returnToParent={()=>{setNavigationTarget("")}}></Historico>}
     </>
 );
 };
