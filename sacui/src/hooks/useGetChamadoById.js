@@ -41,7 +41,7 @@ export const useGetChamadoById = (url, chamadoId, token, shouldExecute=true) => 
         //inicialmente, os dados serão nulos pois a requisição ainda não terminou. Trataremos os dados
         //somente quando a requisição terminar e der tudo certo
         if (!isError && response != null && statusCode === 200) {
-          console.log("Completed useGetChamadosByUser");
+          console.log("Completed useGetChamadosById");
           setChamado(await response.json());
         }
       };
