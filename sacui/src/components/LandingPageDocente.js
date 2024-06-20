@@ -265,6 +265,18 @@ const LandingPageDocente = ({ user, url, token }) => {
             setNavigationTarget("revisar")
         }
     }
+
+    const returnToThis = () => {
+        setSelectedList([]);
+        setNavigationTarget("");
+        
+        //chamado set para forçar a atualização das tabelas
+        setParamAberto({...paramAberto})
+        setParamEmAndamento({...paramEmAndamento})
+        setParamFechado({...paramFechado})
+        setParamRetornado({...paramRetornado})
+
+    }
     const page = (
         <div style={{ display: "flex", flexDirection: "column" }}>
             <Header />
@@ -310,7 +322,7 @@ const LandingPageDocente = ({ user, url, token }) => {
                             chamadosAberto.map((aberto, index) => (
                                 <tr key={aberto.protocolo}>
                                     <td>
-                                        <input type="checkbox" onChange={(e) => addOrRemoveSelection(e, aberto.protocolo)}/>
+                                        <input type="checkbox" checked={selectedList.includes(aberto.protocolo)} onChange={(e) => addOrRemoveSelection(e, aberto.protocolo)}/>
                                     </td>
                                     <td>{aberto.protocolo}</td>
                                     <td>{aberto.prioridade}</td>
@@ -657,7 +669,7 @@ const LandingPageDocente = ({ user, url, token }) => {
     return (
         <>
             {navigationTarget === "" && page}
-            {navigationTarget === "revisar" && <RevisarChamadoDocente user={user} url={url} token={token} chamados={selectedList}></RevisarChamadoDocente>}
+            {navigationTarget === "revisar" && <RevisarChamadoDocente user={user} url={url} token={token} chamados={selectedList} returnToParent={returnToThis}></RevisarChamadoDocente>}
             {navigationTarget === "novoChamado" && <CriarNovoChamado></CriarNovoChamado>}
         </>
     );

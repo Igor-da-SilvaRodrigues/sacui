@@ -15,9 +15,10 @@ import { useUpdateChamado } from "../hooks/useUpdateChamado";
  * @param {*} url A url da api
  * @param {*} token O token de autenticação
  * @param {*} chamados Uma lista com os chamados a serem revisados
+ * @param {*} returnToParent um callback para fechar este componente
  * @returns 
  */
-const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
+const RevisarChamadoDocente = ({ user, url, token, chamados, returnToParent }) => {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [newChamadoList, setNewChamadoList] = useState([])
 
@@ -29,7 +30,7 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
   const { isLoading: isLoadingSetores, isError: isErrorSetores, error: errorSetores, statusCode: statusCodeSetores, setores } = useGetAllSetores(`${url}/setor`, token);
   const {commit: commitUpdate, isLoading: isLoadingUpdate, isError: isErrorUpdate, error: errorUpdate, statusCode: statusCodeUpdate} = useUpdateChamado(`${url}/chamado`, token)
   const [displayModal, setDisplayModal] = useState(false)
-  
+  const [displayCancelar, setDisplayCancelar] = useState(false)
 
   //definindo os valores dos novos chamados que serão inseridos na API como uma atualizações
   //inicialmente eles tem o valor do chamado selecionado, mas são """"mutável"""".
@@ -124,10 +125,10 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
     }
   }
   
-  const saveChanges = async () => {
+  const saveChanges = () => {
     setDisplayModal(true)
   }
-  const cancelChanges = async () => {
+  const cancelChanges = () => {
     setDisplayModal(false)
   }
 
@@ -148,14 +149,31 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
       }
       
       if(list[i].originalStatus != ChamadoStatus.FECHADO){
-        commitUpdate(body);
+        const promise = commitUpdate(body);
+        
+        if(i == list.length-1){
+          //estamos no último request, após finalizarmos ele, fecharemos a tela.
+          promise.then(()=>{close()})
+        }
       }
     }
     setDisplayModal(false)
   }
 
+  const requestClose = () => {
+    setDisplayCancelar(true)
+  }
+
+  const cancelClose = () => {
+    setDisplayCancelar(false)
+  }
+
+  const close = () => {
+    returnToParent()
+  }
+
   return (
-    <div>
+    <div key={new Date().getTime}>
       <ConfirmModal shouldDisplay={displayModal} text="Você tem certeza de que deseja confirmar essas mudanças? Essa ação não pode ser desfeita!" onYes={confirmChanges} onNo={cancelChanges}>
         <div>{newChamadoList && newChamadoList.map((chamado,index) => (
           <div style={{margin: "10px", border: "1px solid lightgray", color:"black", padding:"5px"}}>
@@ -179,6 +197,7 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
           </div>
         ))}</div>
       </ConfirmModal>
+      <ConfirmModal shouldDisplay={displayCancelar} text="Você tem certeza que deseja descartar essas alterações e retornar para a tela inicial?" onYes={close} onNo={cancelClose} />
 
       <Header />
       <WaterMark />
@@ -241,7 +260,7 @@ const RevisarChamadoDocente = ({ user, url, token, chamados }) => {
       <button onClick={nextChamado}>Próximo</button>
       <button>Histórico</button>
       <button onClick={saveChanges}>Salvar</button>
-      <button>Fechar</button>
+      <button onClick={requestClose}>Fechar</button>
       <Footer pos={"fixed"} bot={0} />
     </div>
   );
