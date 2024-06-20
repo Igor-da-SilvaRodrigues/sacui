@@ -19,6 +19,7 @@ import { useUpdateChamado } from "../hooks/useUpdateChamado";
  * @returns 
  */
 const RevisarChamadoDocente = ({ user, url, token, chamados, returnToParent }) => {
+  const [navigationTarget, setNavigationTarget] = useState("")
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [newChamadoList, setNewChamadoList] = useState([])
 
@@ -134,7 +135,7 @@ const RevisarChamadoDocente = ({ user, url, token, chamados, returnToParent }) =
 
   const confirmChanges = async () => {
     const list = [...newChamadoList]
-
+    let promises = []
     for (let i = 0; i < list.length; i++){
       const body = {}
       body.idUsuario = user.matricula
@@ -150,13 +151,17 @@ const RevisarChamadoDocente = ({ user, url, token, chamados, returnToParent }) =
       
       if(list[i].originalStatus != ChamadoStatus.FECHADO){
         const promise = commitUpdate(body);
-        
-        if(i == list.length-1){
-          //estamos no último request, após finalizarmos ele, fecharemos a tela.
-          promise.then(()=>{close()})
-        }
+        console.log(`pushing promise ${i}`)
+        promises.push(promise)
       }
     }
+
+    //fechando a tela imediatamente caso não haja nenhuma tarefa a ser feita
+    for (let i = 0; i < promises.length; i++){
+      await promises[i]
+      console.log(`completed promise ${promises[i]}` )
+    }
+    close();
     setDisplayModal(false)
   }
 
@@ -172,8 +177,8 @@ const RevisarChamadoDocente = ({ user, url, token, chamados, returnToParent }) =
     returnToParent()
   }
 
-  return (
-    <div key={new Date().getTime}>
+  const page = (
+    <div>
       <ConfirmModal shouldDisplay={displayModal} text="Você tem certeza de que deseja confirmar essas mudanças? Essa ação não pode ser desfeita!" onYes={confirmChanges} onNo={cancelChanges}>
         <div>{newChamadoList && newChamadoList.map((chamado,index) => (
           <div style={{margin: "10px", border: "1px solid lightgray", color:"black", padding:"5px"}}>
@@ -264,6 +269,12 @@ const RevisarChamadoDocente = ({ user, url, token, chamados, returnToParent }) =
       <Footer pos={"fixed"} bot={0} />
     </div>
   );
+
+  return (
+    <>
+        {navigationTarget === "" && page}
+    </>
+);
 };
 
 export default RevisarChamadoDocente;
